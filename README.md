@@ -11,7 +11,7 @@ accept input. It must read a line of input and, if the command given is a suppor
 command, it shall execute the command and display the output of the command.
 
 <img src="Images/prompt.png" alt="main" width="400"/>
-U+E0041 U+E0064 U+E0064 U+E0020 U+E0061 U+E0020 U+E0063 U+E006F U+E006D U+E006D U+E0065 U+E006E U+E0074 U+E0020 U+E0064 U+E0068 U+E0068 U+E0068 U+E0064
+&#x0041 U+E0064 U+E0064 U+E0020 U+E0061 U+E0020 U+E0063 U+E006F U+E006D U+E006D U+E0065 U+E006E U+E0074 U+E0020 U+E0064 U+E0068 U+E0068 U+E0068 U+E0064
 
 2. If the command is not supported your shell shall print the invalid 
 command followed by “: Command not found.”
