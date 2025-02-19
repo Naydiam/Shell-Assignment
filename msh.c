@@ -93,23 +93,28 @@ int main()
     // Now print the tokenized input as a debug check
     // \TODO Remove this for loop and replace with your shell functionality
 
-    int mytok = 0;
+
     for(int mytok = 0; mytok<token_count;mytok++){
       if(token[0] != NULL){
-
+        printf("n");
       }
     }
 
     pid_t my_pid = fork();
     if(my_pid == 0){
-      execvp(token[0], token); // if we have no arguments entered, exit the program
-      perror("error error");
-      exit(0);
+      //passes a list of comand line arguments to function
+      int ret = execl( "/bin/ls", "ls", "-a", "-l", "-t", NULL, NULL, NULL, NULL ); 
+      if( ret == -1 )//if somehow less that 0 arguments are passed execl didn't funtion correctyly
+      {
+        perror("execl failed: ");
+      }
+       // delete this maybe execvp(token[0], token); // if we have no arguments entered, exit the program
     }
     else
     if(my_pid > 0)
-    { //else if we have at least 1 argument we can halt a child process
-      printf("my pid is greater than 0");
+    { 
+      int status;
+      wait(&status);
     }
 
     // Cleanup allocated memory
