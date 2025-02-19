@@ -38,7 +38,7 @@
 
 #define MAX_COMMAND_SIZE 128    // The maximum command-line size
 
-#define MAX_NUM_ARGUMENTS 1     // Mav shell currently only supports one argument
+#define MAX_NUM_ARGUMENTS 11     // Mav shell currently only supports one argument
 
 int main()
 {
@@ -93,10 +93,23 @@ int main()
     // Now print the tokenized input as a debug check
     // \TODO Remove this for loop and replace with your shell functionality
 
-    int token_index  = 0;
-    for( token_index = 0; token_index < token_count; token_index ++ ) 
-    {
-      printf("token[%d] = %s\n", token_index, token[token_index] );  
+    int mytok = 0;
+    for(int mytok = 0; mytok<token_count;mytok++){
+      if(token[0] != NULL){
+
+      }
+    }
+
+    pid_t my_pid = fork();
+    if(my_pid == 0){
+      execvp(token[0], token); // if we have no arguments entered, exit the program
+      perror("error error");
+      exit(0);
+    }
+    else
+    if(my_pid > 0)
+    { //else if we have at least 1 argument we can halt a child process
+      printf("my pid is greater than 0");
     }
 
     // Cleanup allocated memory
