@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
           close(pfd[0]);
           _exit(EXIT_SUCCESS);          
 
-          for(int i =1; i<argc; i++)
+          for(int i =1; i<mytok; i++)
           {
             if(strcmp(token[i], ">")==0)
             {
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
               }
               dup2(fd, 1);
               close(fd);
-              argv[i] = NULL;
+              token[i] = NULL;
             }
           }
           execvp( token[1], &token[1] );
