@@ -40,7 +40,7 @@
 
 #define MAX_NUM_ARGUMENTS 11     // Mav shell currently only supports one argument
 
-int main()
+int main(int argc, char *argv[])
 {
 
   char * command_string = (char*) malloc( MAX_COMMAND_SIZE );
@@ -99,7 +99,7 @@ int main()
     {
       if(token[0] != NULL)
       {
-        if((strcmp(token[0], "exit")|| strcmp(token[0], "quit"))==0 )
+        if(strcmp(token[0], "exit")==0 || strcmp(token[0], "quit")==0)
         {
           exit(0);
         }
@@ -108,42 +108,30 @@ int main()
         if(my_pid == 0)
         {
           //here we are running the child pid
-          //passes a list of comand line arguments to function
-          int ret = execvp( token[0], token); //replacn
+          //passes a list of comand line arguments to function as an array of *
+          int ret = execvp( token[0], token); 
+          //CURRENTLY EXECVP ALLOWS ME TO MKDIR AND BUT NOT CD
           if( ret == -1 )//if somehow less that 0 arguments are passed execl didn't funtion correctyly
           {
-            perror("execl failed: ");
+            perror("execvp failed: ");
             exit(-1);
-          } 
+          }
+          //this for loop was supposed to check for the redirect opp.
+          // but i can't find that step in the intstructions anymore :/ 
+          for(int i =0; i<argc; i++){
+
+          }
         }
         else
         if(my_pid > 0)//parent is running
         { 
           int status;
-          waitpid(my_pid, &status, 0);
+          waitpid(my_pid, &status, 0); //wait for child pid to finish running
           
         }
         
       }
     }
-/*
-    pid_t my_pid = fork();//create a child pid
-    if(my_pid == 0){//here we are running the child pid
-      //passes a list of comand line arguments to function
-      int ret = execl( "/bin/ls", "ls", "-a", "-l", "-t", NULL, NULL, NULL, NULL ); 
-      if( ret == -1 )//if somehow less that 0 arguments are passed execl didn't funtion correctyly
-      {
-        perror("execl failed: ");
-      }
-       
-    }
-    else
-    if(my_pid > 0)//parent is running
-    { 
-      int status;
-      waitpid(my_pid, &status, 0);
-    }
-*/
     // Cleanup allocated memory
     for( int i = 0; i < MAX_NUM_ARGUMENTS; i++ )
     {
