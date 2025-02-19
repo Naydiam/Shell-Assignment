@@ -100,11 +100,33 @@ int main()
       if(token[0] != NULL)
       {
         if((strcmp(token[0], "exit")|| strcmp(token[0], "quit"))==0 )
-        exit(0);
+        {
+          exit(0);
+        }
+
+        pid_t my_pid = fork();//create a child pid
+        if(my_pid == 0)
+        {
+          //here we are running the child pid
+          //passes a list of comand line arguments to function
+          int ret = execvp( token[0], token); //replacn
+          if( ret == -1 )//if somehow less that 0 arguments are passed execl didn't funtion correctyly
+          {
+            perror("execl failed: ");
+            exit(-1);
+          } 
+        }
+        else
+        if(my_pid > 0)//parent is running
+        { 
+          int status;
+          waitpid(my_pid, &status, 0);
+          
+        }
         
       }
     }
-
+/*
     pid_t my_pid = fork();//create a child pid
     if(my_pid == 0){//here we are running the child pid
       //passes a list of comand line arguments to function
@@ -121,7 +143,7 @@ int main()
       int status;
       waitpid(my_pid, &status, 0);
     }
-
+*/
     // Cleanup allocated memory
     for( int i = 0; i < MAX_NUM_ARGUMENTS; i++ )
     {
