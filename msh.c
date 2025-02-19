@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
 
       //if my token is not empty check to see if its first element is either quit or exit
       //if so exit the program
+    pid_t my_pid = fork();//create a child pid
     for(int mytok = 0; mytok<token_count;mytok++)
     {
       if(token[0] != NULL)
@@ -107,19 +108,16 @@ int main(int argc, char *argv[])
           exit(0);
         }
 
-        pid_t my_pid = fork();//create a child pid
-        int pfd[2]; //all of the potential command lines args
-        char buffer;
-      
-        if(pipe(pfd)==-1){
-          perror("pipe");
-          exit(EXIT_FAILURE);
-        }
-        if(my_pid == 0)
+        if(my_pid == 0)//here we are running the child pid
         {
-          //here we are running the child pid
           //passes a list of comand line arguments to function as an array of *
           int ret = execvp( token[0], token);
+          //if somehow less that 0 arguments are passed execl didn't funtion correctyly
+          if( ret == -1 )
+          {
+            perror("execvp failed: ");
+            exit(-1);
+          }  
 
           for(int i =1; i<argc; i++)
           {
@@ -135,32 +133,13 @@ int main(int argc, char *argv[])
               close(fd);
               argv[i] = NULL;
             }
-            execvp(argv[1], &argv[1]);
+           
           }
-          close(pfd[1]);
-          while(read(pfd[0], &buffer, 1)>0)
-          {
-            write(STDOUT_FILENO, &buffer, 1);
-          }
-          write(STDOUT_FILENO, "\n", 1);
-          close(pfd[0]);
-          _exit(EXIT_SUCCESS);
-          if( ret == -1 )//if somehow less that 0 arguments are passed execl didn't funtion correctyly
-          {
-            perror("execvp failed: ");
-            exit(-1);
-          }
-          
-        }
+          execvp( argv[1], &argv[1] );
+        } 
         else
         if(my_pid > 0)//parent is running
         { 
-          //I GET A SEG FAULT  EVER SINCE I ADDED THIS HERE//
-          close(pfd[0]);
-          write(pfd[1], argv[1], strlen(argv[1]));
-          close(pfd[1]);
-          exit(EXIT_SUCCESS);
-          //SEG FAULT//
           int status;
           waitpid(my_pid, &status, 0); //wait for child pid to finish running
           

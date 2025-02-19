@@ -45,20 +45,35 @@ shell must handle cd ..
 
 <img src="Images/cd.png" alt="main" width="400"/>
 
-10. Tabs or spaces shall be used to indent the code. Your code must use 
-one or the other. All indentation must be consistent.
+Your shell shall save the last 50 commands and command line parameters
 
-11. No line of code shall exceed 100 characters. 
+You shall print the history log, excluding blank line entries when the user types history
 
-12. All code must be well commented. This means descriptive comments 
-that tell the intent of the code, not just what the code is executing. 
+msh> history
+[1] ls
+[2] mkdir foo
+[3] cd foo
+[4] cd ..
+[5] history
+The user can re-run any commnd in the history by typing !# where # is the number of the command to rerun.
 
-13. Keep your curly brace placement consistent. If you place curly braces 
-on a new line , always place curly braces on a new end. Don’t mix end line brace 
-placement with new line brace placement. 
-   
-14. Remove all extraneous debug output before submission. The only 
-output shall be the output of the commands entered or the shell prompt. 
+Your shell shall support redirection. The syntax [process] > [file] tells your shell to redirect the process’s standard output to a file.
+
+You do not need to support redirection for shell built-in commands. You do not need to support stderr redirection or appending to files (e.g. [process] >> [file]). You can assume that there will always be spaces around special characters < and >. See popen.c in Code-Examples
+
+Your shell shall support pipes between programs. You can assume there will always be spaces around the special character | . See pipe.c in Code-Examples
+
+Your program shall block the SIGINT and SIGTSTP signals. See sigint.c in Code-Examples
+
+Tabs or spaces shall be used to indent the code. Your code must use one or the other. All indentation must be consistent.
+
+No line of code shall exceed 100 characters.
+
+All code must be well commented. This means descriptive comments that tell the intent of the code, not just what the code is executing.
+
+Keep your curly brace placement consistent. If you place curly braces on a new line , always place curly braces on a new end. Don’t mix end line brace placement with new line brace placement.
+
+Remove all extraneous debug output before submission. The only output shall be the output of the commands entered or the shell prompt.
    
 ## Administrative
 
