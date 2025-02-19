@@ -38,7 +38,7 @@
 
 #define MAX_COMMAND_SIZE 128    // The maximum command-line size
 
-#define MAX_NUM_ARGUMENTS 1     // Mav shell currently only supports one argument
+#define MAX_NUM_ARGUMENTS 11     // Mav shell currently only supports one argument
 
 int main()
 {
@@ -94,10 +94,20 @@ int main()
     // \TODO Remove this for loop and replace with your shell functionality
 
     int token_index  = 0;
-    for( token_index = 0; token_index < token_count; token_index ++ ) 
-    {
-      printf("token[%d] = %s\n", token_index, token[token_index] );  
-    }
+    pid_t my_pid = fork();
+    //process kid_pid calls fork()to create a process
+     int status;
+     if(pid == -1){
+       perror("fork failed");
+       exit(EXIT_FAILURE);
+     }
+     else(wait(my_pid,  status)){
+       if(pid == 0 ){
+         execl("/bin/ls", "ls", NULL );
+         exit(0);
+       }
+     }
+
 
     // Cleanup allocated memory
     for( int i = 0; i < MAX_NUM_ARGUMENTS; i++ )
