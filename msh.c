@@ -23,13 +23,14 @@
 
 #define _GNU_SOURCE
 
+#include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <string.h>
-#include <assert.h>
 #include <signal.h>
 
 
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
         }
 
         pid_t my_pid = fork();//create a child pid
-        int pfd[2];
+        int pfd[2]; //all of the potential command lines args
         char buffer;
       
         if(pipe(pfd)==-1){
@@ -118,8 +119,24 @@ int main(int argc, char *argv[])
         {
           //here we are running the child pid
           //passes a list of comand line arguments to function as an array of *
-          
-          int ret = execvp( token[0], token); 
+          int ret = execvp( token[0], token);
+
+          for(int i =1; i<argc; i++)
+          {
+            if(strcmp(argv[i], ">")==0)
+            {
+              int fd = open(argv[i+1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+              if(fd < 0)
+              {
+                perror("Can't open output file");
+                exit(0);
+              }
+              dup2(fd, 1);
+              close(fd);
+              argv[i] = NULL;
+            }
+            execvp(argv[1], &argv[1]);
+          }
           close(pfd[1]);
           while(read(pfd[0], &buffer, 1)>0)
           {
@@ -133,15 +150,17 @@ int main(int argc, char *argv[])
             perror("execvp failed: ");
             exit(-1);
           }
-          //this for loop was supposed to check for the redirect opp.
-          // but i can't find that step in the intstructions anymore :/ 
-          /*for(int i =0; i<argc; i++){
-
-          }*/
+          
         }
         else
         if(my_pid > 0)//parent is running
         { 
+          //I GET A SEG FAULT  EVER SINCE I ADDED THIS HERE//
+          close(pfd[0]);
+          write(pfd[1], argv[1], strlen(argv[1]));
+          close(pfd[1]);
+          exit(EXIT_SUCCESS);
+          //SEG FAULT//
           int status;
           waitpid(my_pid, &status, 0); //wait for child pid to finish running
           
