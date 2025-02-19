@@ -91,30 +91,35 @@ int main()
     }
 
     // Now print the tokenized input as a debug check
-    // \TODO Remove this for loop and replace with your shell functionality
+    // \TODO Remove this for loop and replace with your shell functionality [DID THIS PART]
 
-
-    for(int mytok = 0; mytok<token_count;mytok++){
-      if(token[0] != NULL){
-        printf("n");
+      //if my token is not empty check to see if its first element is either quit or exit
+      //if so exit the program
+    for(int mytok = 0; mytok<token_count;mytok++)
+    {
+      if(token[0] != NULL)
+      {
+        if((strcmp(token[0], "exit")|| strcmp(token[0], "quit"))==0 )
+        exit(0);
+        
       }
     }
 
-    pid_t my_pid = fork();
-    if(my_pid == 0){
+    pid_t my_pid = fork();//create a child pid
+    if(my_pid == 0){//here we are running the child pid
       //passes a list of comand line arguments to function
       int ret = execl( "/bin/ls", "ls", "-a", "-l", "-t", NULL, NULL, NULL, NULL ); 
       if( ret == -1 )//if somehow less that 0 arguments are passed execl didn't funtion correctyly
       {
         perror("execl failed: ");
       }
-       // delete this maybe execvp(token[0], token); // if we have no arguments entered, exit the program
+       
     }
     else
-    if(my_pid > 0)
+    if(my_pid > 0)//parent is running
     { 
       int status;
-      wait(&status);
+      waitpid(my_pid, &status, 0);
     }
 
     // Cleanup allocated memory
