@@ -96,18 +96,22 @@ int main(int argc, char *argv[])
     // Now print the tokenized input as a debug check
     // \TODO Remove this for loop and replace with your shell functionality [DID THIS PART]
 
-    int pfd[2];
+      int pfd[2];
+      char buffer;
+ 
+      if(pipe(pfd) == -1)
+      {
+        perror("pipe");
+        exit(EXIT_FAILURE);
+      }
+
+      //if my token is not empty check to see if its first element is either quit or exit
+      //if so exit the program
     pid_t my_pid = fork();//create a child pid
-    char buffer;
-
-    assert(argc == 2);
-
     for(int mytok = 0; mytok<token_count;mytok++)
     {
       if(token[0] != NULL)
       {
-          //if my token is not empty check to see if its first element is either quit or exit
-          //if so exit the program
         if(strcmp(token[0], "exit")==0 || strcmp(token[0], "quit")==0)
         {
           exit(0);
@@ -124,6 +128,16 @@ int main(int argc, char *argv[])
             exit(-1);
           }  
 
+          close(pfd[1]);
+          while(read(pfd[0], &buffer, 1)>0)
+          {
+            write(STDOUT_FILENO, &buffer, 1);
+          }
+
+          write(STDOUT_FILENO, "\n", 1);
+          close(pfd[0]);
+          _exit(EXIT_SUCCESS);          
+
           for(int i =1; i<argc; i++)
           {
             if(strcmp(argv[i], ">")==0)
@@ -138,29 +152,15 @@ int main(int argc, char *argv[])
               close(fd);
               argv[i] = NULL;
             }
-           
           }
           execvp( argv[1], &argv[1] );
-          // JUST IN CASE THIS IS WHERE THE I STARTED ADDING STUFF 
-          // DELETE THIS STUFF IF IT DON'T WORK
-          // Close the write end of the pipe since the child
-          // will read from the pipe
-          close(pfd[1]);          
-
-          // Block and read from the pipe
-          while (read(pfd[0], &buf, 1) > 0)  
-          {
-            write(STDOUT_FILENO, &buf, 1);
-          }
-
-          write(STDOUT_FILENO, "\n", 1);
-
-          // Done reading so close the pipe and exit
-          close(pfd[0]);
-        _exit(EXIT_SUCCESS);
-        break;
         } 
         else
+        {
+          close(pfd[0]);
+          write(pfd[1], argv[1], strlen(argv[1]));
+          close(pfd[1]);
+        }
         if(my_pid > 0)//parent is running
         { 
           int status;
