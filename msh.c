@@ -150,9 +150,9 @@ int main(int argc, char *argv[])
 
           for(int i =1; i<argc; i++)
           {
-            if(strcmp(argv[i], ">")==0)
+            if(strcmp(token[i], ">")==0)
             {
-              int fd = open(argv[i+1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+              int fd = open(token[i+1], O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
               if(fd < 0)
               {
                 perror("Can't open output file");
@@ -163,12 +163,12 @@ int main(int argc, char *argv[])
               argv[i] = NULL;
             }
           }
-          execvp( argv[1], &argv[1] );
+          execvp( token[1], &token[1] );
         } 
         else
         {
           close(pfd[0]);
-          write(pfd[1], argv[1], strlen(argv[1]));
+          write(pfd[1], token[0], strlen(token[0]));
           close(pfd[1]);
         }
         if(my_pid > 0)//parent is running
