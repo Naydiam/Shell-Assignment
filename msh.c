@@ -29,7 +29,9 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <assert.h>
 #include <signal.h>
+
 
 #define WHITESPACE " \t\n"      // We want to split our command line up into tokens
                                 // so we need to define what delimits our tokens.
@@ -105,12 +107,27 @@ int main(int argc, char *argv[])
         }
 
         pid_t my_pid = fork();//create a child pid
+        int pfd[2];
+        char buffer;
+      
+        if(pipe(pfd)==-1){
+          perror("pipe");
+          exit(EXIT_FAILURE);
+        }
         if(my_pid == 0)
         {
           //here we are running the child pid
           //passes a list of comand line arguments to function as an array of *
+          
           int ret = execvp( token[0], token); 
-          //CURRENTLY EXECVP ALLOWS ME TO MKDIR AND BUT NOT CD
+          close(pfd[1]);
+          while(read(pfd[0], &buffer, 1)>0)
+          {
+            write(STDOUT_FILENO, &buffer, 1);
+          }
+          write(STDOUT_FILENO, "\n", 1);
+          close(pfd[0]);
+          _exit(EXIT_SUCCESS);
           if( ret == -1 )//if somehow less that 0 arguments are passed execl didn't funtion correctyly
           {
             perror("execvp failed: ");
@@ -118,9 +135,9 @@ int main(int argc, char *argv[])
           }
           //this for loop was supposed to check for the redirect opp.
           // but i can't find that step in the intstructions anymore :/ 
-          for(int i =0; i<argc; i++){
+          /*for(int i =0; i<argc; i++){
 
-          }
+          }*/
         }
         else
         if(my_pid > 0)//parent is running
