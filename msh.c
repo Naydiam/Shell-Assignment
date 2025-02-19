@@ -115,11 +115,16 @@ int main(int argc, char *argv[])
     pid_t my_pid = fork();//create a child pid
     for(int mytok = 0; mytok<token_count;mytok++)
     {
-      if(token[0] != NULL)
+      if( token[0] != NULL)
       {
-        if(strcmp(token[0], "exit")==0 || strcmp(token[0], "quit")==0)
+        int n=0;
+        if(strcmp( token[0], "exit")==0 || strcmp( token[0], "quit")==0)
         {
           exit(0);
+        }
+        if(strcmp( token[0], "cd")== 0)
+        {
+          chdir(fgets(&buffer, n, stdin));
         }
 
         if(my_pid == 0)//here we are running the child pid
