@@ -96,13 +96,18 @@ int main(int argc, char *argv[])
     // Now print the tokenized input as a debug check
     // \TODO Remove this for loop and replace with your shell functionality [DID THIS PART]
 
-      //if my token is not empty check to see if its first element is either quit or exit
-      //if so exit the program
+    int pfd[2];
     pid_t my_pid = fork();//create a child pid
+    char buffer;
+
+    assert(argc == 2);
+
     for(int mytok = 0; mytok<token_count;mytok++)
     {
       if(token[0] != NULL)
       {
+          //if my token is not empty check to see if its first element is either quit or exit
+          //if so exit the program
         if(strcmp(token[0], "exit")==0 || strcmp(token[0], "quit")==0)
         {
           exit(0);
@@ -136,6 +141,24 @@ int main(int argc, char *argv[])
            
           }
           execvp( argv[1], &argv[1] );
+          // JUST IN CASE THIS IS WHERE THE I STARTED ADDING STUFF 
+          // DELETE THIS STUFF IF IT DON'T WORK
+          // Close the write end of the pipe since the child
+          // will read from the pipe
+          close(pfd[1]);          
+
+          // Block and read from the pipe
+          while (read(pfd[0], &buf, 1) > 0)  
+          {
+            write(STDOUT_FILENO, &buf, 1);
+          }
+
+          write(STDOUT_FILENO, "\n", 1);
+
+          // Done reading so close the pipe and exit
+          close(pfd[0]);
+        _exit(EXIT_SUCCESS);
+        break;
         } 
         else
         if(my_pid > 0)//parent is running
